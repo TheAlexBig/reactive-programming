@@ -3,7 +3,9 @@ package com.alexbig.reactiveprogramming.services;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FluxMonoServicesTest {
 
@@ -72,5 +74,85 @@ class FluxMonoServicesTest {
             assertEquals(strings.size(), 5);
             return true;
         }).verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxConcatMap() {
+        var fruitFlux = fluxMonoServices.fruitsFluxConcatMap();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(17)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsMonoFlatMapMany() {
+        var fruitFlux = fluxMonoServices.fruitsMonoFlatMapMany();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxTransform() {
+        var fruitFlux = fluxMonoServices.fruitsFluxTransform(5);
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxTransformDefaultIfEmpty() {
+        var fruitFlux = fluxMonoServices.fruitsFluxTransformDefaultIfEmpty(100);
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(1)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxTransformSwitchIfEmpty() {
+        var fruitFlux = fluxMonoServices.fruitsFluxTransformSwitchIfEmpty(6);
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxConcat() {
+        var fruitFlux = fluxMonoServices.fruitsFluxConcat();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(4)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxConcatWithOperator() {
+        var fruitFlux = fluxMonoServices.fruitsFluxConcatWithOperator();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(4)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxMerge() {
+        var fruitFlux = fluxMonoServices.fruitsFluxMerge();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(4)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxMergeWith() {
+        var fruitFlux = fluxMonoServices.fruitsFluxMergeWith();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(4)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxMergeWithSequential() {
+        var fruitFlux = fluxMonoServices.fruitsFluxMergeWithSequential();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(4)
+                .verifyComplete();
     }
 }
