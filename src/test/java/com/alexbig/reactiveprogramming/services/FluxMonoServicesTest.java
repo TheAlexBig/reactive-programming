@@ -155,4 +155,44 @@ class FluxMonoServicesTest {
                 .expectNextCount(4)
                 .verifyComplete();
     }
+
+    @Test
+    void fruitsFluxZip() {
+        var fruitFlux = fluxMonoServices.fruitsFluxZip();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxZipWith() {
+        var fruitFlux = fluxMonoServices.fruitsFluxZipWith();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxZipTuple() {
+        var fruitFlux = fluxMonoServices.fruitsFluxZipTuple();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsMonoZipWith() {
+        var stringMono = fluxMonoServices.fruitsMonoZipWith();
+        StepVerifier.create(stringMono)
+                .expectNext("MangoCarrot")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxFilterDoOn() {
+        var fruitFlux = fluxMonoServices.fruitsFluxFilterDoOn(5);
+        StepVerifier.create(fruitFlux)
+                .expectNext("Banana", "Orange")
+                .verifyComplete();
+    }
 }

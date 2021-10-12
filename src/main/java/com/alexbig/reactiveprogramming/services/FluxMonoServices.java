@@ -12,21 +12,22 @@ import java.util.function.Function;
 public class FluxMonoServices {
 
     public static final List<String> STRING_LIST = List.of("Apple", "Banana", "Orange");
+    public static final Flux<String> FRUITS = Flux.just("Mango", "Orange");
+    public static final Flux<String> VEGGIES = Flux.just("Cabbage", "Carrot");
+    public static final Mono<String> MANGO = Mono.just("Mango");
 
     public Flux<String> fruitsFlux(){
         return Flux.fromIterable(STRING_LIST);
     }
 
     public Flux<String> fruitsFluxMap(){
-        return
-                Flux.fromIterable(STRING_LIST)
-                        .map(String::toUpperCase);
+        return Flux.fromIterable(STRING_LIST)
+                .map(String::toUpperCase);
     }
 
     public Flux<String> fruitsFluxFilter(int number){
-        return
-                Flux.fromIterable(STRING_LIST)
-                        .filter(s -> s.length() > number);
+        return Flux.fromIterable(STRING_LIST)
+               .filter(s -> s.length() > number);
     }
 
     public Flux<String> fruitsFluxFlatMap(){
@@ -38,14 +39,14 @@ public class FluxMonoServices {
     public Flux<String> fruitsFluxFlatMapAsync(){
         return Flux.fromIterable(STRING_LIST)
                 .flatMap(s -> Flux.just(s.split("")))
-                .delayElements(Duration.ofMillis(new Random().nextInt(1000)))
+                .delayElements(Duration.ofMillis(new Random().nextInt(100)))
                 .log();
     }
 
     public Flux<String> fruitsFluxConcatMap(){
         return Flux.fromIterable(STRING_LIST)
                 .concatMap(s -> Flux.just(s.split("")))
-                .delayElements(Duration.ofMillis(new Random().nextInt(1000)))
+                .delayElements(Duration.ofMillis(new Random().nextInt(100)))
                 .log();
     }
 
@@ -74,41 +75,66 @@ public class FluxMonoServices {
     }
 
     public Flux<String> fruitsFluxConcat(){
-        var fruits = Flux.just("Mango", "Orange");
-        var veggies = Flux.just("Cabbage", "Carrot");
-        return Flux.concat(fruits, veggies);
+        return Flux.concat(FRUITS, VEGGIES);
     }
 
     public Flux<String> fruitsFluxConcatWithOperator(){
-        var fruits = Flux.just("Mango", "Orange");
-        var veggies = Flux.just("Cabbage", "Carrot");
-        return fruits.concatWith(veggies);
+        return FRUITS.concatWith(VEGGIES);
     }
 
     public Flux<String> fruitsFluxMerge(){
-        var fruits = Flux.just("Mango", "Orange").delayElements(Duration.ofMillis(50));
-        var veggies = Flux.just("Cabbage", "Carrot").delayElements(Duration.ofMillis(70));
-        return Flux.merge(fruits, veggies).log();
+        var fruits = FRUITS.delayElements(Duration.ofMillis(50));
+        var veggies = VEGGIES.delayElements(Duration.ofMillis(70));
+        return Flux.merge(fruits, veggies)
+                .log();
     }
 
     public Flux<String> fruitsFluxMergeWith(){
-        var fruits = Flux.just("Mango", "Orange").delayElements(Duration.ofMillis(50));
-        var veggies = Flux.just("Cabbage", "Carrot").delayElements(Duration.ofMillis(70));
-        return fruits.mergeWith(veggies).log();
+        var fruits = FRUITS.delayElements(Duration.ofMillis(50));
+        var veggies = VEGGIES.delayElements(Duration.ofMillis(70));
+        return fruits.mergeWith(veggies)
+                .log();
     }
 
     public Flux<String> fruitsFluxMergeWithSequential(){
-        var fruits = Flux.just("Mango", "Orange").delayElements(Duration.ofMillis(50));
-        var veggies = Flux.just("Cabbage", "Carrot").delayElements(Duration.ofMillis(70));
-        return Flux.mergeSequential(fruits, veggies).log();
+        var fruits = FRUITS.delayElements(Duration.ofMillis(50));
+        var veggies = VEGGIES.delayElements(Duration.ofMillis(70));
+        return Flux.mergeSequential(fruits, veggies)
+                .log();
+    }
+
+    public Flux<String> fruitsFluxZip(){
+        return Flux.zip(FRUITS, VEGGIES, (s1, s2) -> s1+s2)
+                .log();
+    }
+
+    public Flux<String> fruitsFluxZipWith(){
+        return FRUITS.zipWith(VEGGIES, (s1, s2) -> s1+s2)
+                .log();
+    }
+
+    public Flux<String> fruitsFluxZipTuple(){
+        var moreVeggies = Flux.just("Lettuce", "Spinach");
+        return Flux.zip(FRUITS, VEGGIES, moreVeggies)
+                .map(objects -> objects.getT1()+objects.getT2()+objects.getT3())
+                .log();
+    }
+
+    public Flux<String> fruitsFluxFilterDoOn(int number){
+        return Flux.fromIterable(STRING_LIST)
+                .filter(s -> s.length() > number)
+                .doOnNext(s -> System.out.println("DoOn = "+ s))
+                .doOnSubscribe(subscription -> System.out.println("Subscription = "+ subscription.toString()))
+                .doOnComplete(() -> System.out.println("Completed"))
+                .log();
     }
 
     public Mono<String> fruitMono(){
-        return Mono.just("Mango");
+        return MANGO;
     }
 
     public Mono<List<String>> fruitsMonoFlatMap(){
-        return Mono.just("Mango")
+        return MANGO
                 .flatMap(s -> Mono.just(List.of(s.split(""))))
                 .log();
     }
@@ -119,7 +145,11 @@ public class FluxMonoServices {
                 .log();
     }
 
-
+    public Mono<String> fruitsMonoZipWith(){
+        var carrot = Mono.just("Carrot");
+        return MANGO.zipWith(carrot, (s1, s2) -> s1+s2)
+                .log();
+    }
 
     public static void main(String[] args){
         FluxMonoServices fluxMonoServices = new FluxMonoServices();
