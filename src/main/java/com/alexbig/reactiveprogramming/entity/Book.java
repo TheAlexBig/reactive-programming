@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Book {
+public class Book  {
     private BookInfo bookInfo;
     private List<Review> reviews;
 }

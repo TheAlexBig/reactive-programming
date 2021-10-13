@@ -32,19 +32,19 @@ class BookServiceTest {
     @BeforeAll
     static void setBookService(){
         var bookInfo_1 = BookInfo.builder()
-                .bookInfoId(ID1)
+                .id(ID1)
                 .author("Author One")
                 .ISBN("12345678")
                 .title("Book One")
                 .build();
         var bookInfo_2 = BookInfo.builder()
-                .bookInfoId(ID2)
+                .id(ID2)
                 .author("Author Two")
                 .ISBN("22345678")
                 .title("Book Two")
                 .build();
         var bookInfo_3 = BookInfo.builder()
-                .bookInfoId(ID3)
+                .id(ID3)
                 .author("Author Three")
                 .ISBN("32345678")
                 .title("Book Three")
@@ -53,25 +53,25 @@ class BookServiceTest {
 
 
         var review_1 = Review.builder()
-                .reviewId(1)
+                .id(1)
                 .bookInfoId(ID1)
                 .ratings(5.0)
                 .comments("Great!")
                 .build();
         var review_2 = Review.builder()
-                .reviewId(2)
+                .id(2)
                 .bookInfoId(ID1)
                 .ratings(3.0)
                 .comments("Good!")
                 .build();
         var review_3 = Review.builder()
-                .reviewId(3)
+                .id(3)
                 .bookInfoId(ID2)
                 .ratings(1.0)
                 .comments("OMEGALUL")
                 .build();
         var review_4 = Review.builder()
-                .reviewId(4)
+                .id(4)
                 .bookInfoId(ID3)
                 .ratings(2.0)
                 .comments("Could be better")

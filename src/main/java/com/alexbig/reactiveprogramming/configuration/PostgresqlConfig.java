@@ -3,6 +3,7 @@ package com.alexbig.reactiveprogramming.configuration;
 import io.r2dbc.spi.ConnectionFactories;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
@@ -13,16 +14,30 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 @EnableR2dbcRepositories("com.alexbig.reactiveprogramming.repository")
 public class PostgresqlConfig extends AbstractR2dbcConfiguration {
 
+    @Value("${config.r2dbc.driver}")
+    private String driver;
+    @Value("${config.r2dbc.host}")
+    private String host;
+    @Value("${config.r2dbc.port}")
+    private Integer port;
+    @Value("${config.r2dbc.user}")
+    private String user;
+    @Value("${config.r2dbc.password}")
+    private String password;
+    @Value("${config.r2dbc.database}")
+    private String database;
+
+
     @Override
     @Bean
     public ConnectionFactory connectionFactory() {
         return ConnectionFactories.get(ConnectionFactoryOptions.builder()
-                .option(ConnectionFactoryOptions.DRIVER, "postgresql")
-                .option(ConnectionFactoryOptions.HOST, "localhost")
-                .option(ConnectionFactoryOptions.PORT, 5432)
-                .option(ConnectionFactoryOptions.USER, "postgres")
-                .option(ConnectionFactoryOptions.PASSWORD, "postgres")
-                .option(ConnectionFactoryOptions.DATABASE, "booksdb")
+                .option(ConnectionFactoryOptions.DRIVER, driver)
+                .option(ConnectionFactoryOptions.HOST, host)
+                .option(ConnectionFactoryOptions.PORT, port)
+                .option(ConnectionFactoryOptions.USER, user)
+                .option(ConnectionFactoryOptions.PASSWORD, password)
+                .option(ConnectionFactoryOptions.DATABASE, database)
                 .build());
     }
 

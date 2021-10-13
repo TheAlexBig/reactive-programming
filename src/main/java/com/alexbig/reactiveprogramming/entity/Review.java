@@ -2,6 +2,8 @@ package com.alexbig.reactiveprogramming.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.domain.Persistable;
 
 
 @Data
@@ -9,10 +11,23 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 @Builder
 @ToString
-public class Review {
+public class Review implements Persistable<Integer> {
     @Id
-    private Integer reviewId;
+    private Integer id;
     private Integer bookInfoId;
     private Double ratings;
     private String comments;
+
+    @Transient
+    private boolean newReview;
+
+    @Override
+    public boolean isNew() {
+        return this.newReview || this.id == null;
+    }
+
+    public Review setAsNew(){
+        this.newReview = true;
+        return this;
+    }
 }
