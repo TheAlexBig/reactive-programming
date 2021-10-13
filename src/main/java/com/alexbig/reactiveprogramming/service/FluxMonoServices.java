@@ -1,4 +1,4 @@
-package com.alexbig.reactiveprogramming.services;
+package com.alexbig.reactiveprogramming.service;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;

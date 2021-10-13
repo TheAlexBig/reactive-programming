@@ -1,4 +1,4 @@
-package com.alexbig.reactiveprogramming.services;
+package com.alexbig.reactiveprogramming.service;
 
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
