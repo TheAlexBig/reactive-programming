@@ -1,5 +1,6 @@
 package com.alexbig.reactiveprogramming.services;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -8,13 +9,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-
+@Slf4j
 public class FluxMonoServices {
 
     public static final List<String> STRING_LIST = List.of("Apple", "Banana", "Orange");
     public static final Flux<String> FRUITS = Flux.just("Mango", "Orange");
     public static final Flux<String> VEGGIES = Flux.just("Cabbage", "Carrot");
     public static final Mono<String> MANGO = Mono.just("Mango");
+    public static final String EXCEPTION_OCCURRED = "Exception Occurred";
 
     public Flux<String> fruitsFlux(){
         return Flux.fromIterable(STRING_LIST);
@@ -123,9 +125,57 @@ public class FluxMonoServices {
     public Flux<String> fruitsFluxFilterDoOn(int number){
         return Flux.fromIterable(STRING_LIST)
                 .filter(s -> s.length() > number)
-                .doOnNext(s -> System.out.println("DoOn = "+ s))
-                .doOnSubscribe(subscription -> System.out.println("Subscription = "+ subscription.toString()))
-                .doOnComplete(() -> System.out.println("Completed"))
+                .doOnNext(s -> log.info("DoOn = "+ s))
+                .doOnSubscribe(subscription -> log.info("Subscription = "+ subscription.toString()))
+                .doOnComplete(() -> log.info("Completed"))
+                .log();
+    }
+
+    public Flux<String> fruitsFluxOnErrorReturn(){
+        return FRUITS.concatWith(
+                Flux.error(new RuntimeException(EXCEPTION_OCCURRED)))
+                .onErrorReturn("ErrorFound")
+                .log();
+    }
+
+    public Flux<String> fruitsFluxOnErrorContinue(){
+        return FRUITS.concatWith(VEGGIES)
+                .map(s -> {
+                    if(s.equals("Mango"))
+                        throw new RuntimeException(EXCEPTION_OCCURRED);
+                    return s.toUpperCase();
+                })
+                .onErrorContinue((throwable, o) ->{
+                    log.info("error = {}",throwable.getMessage());
+                    log.info("object = {}", o);
+                })
+                .log();
+    }
+
+    public Flux<String> fruitsFluxOnErrorMap(){
+        return VEGGIES.concatWith(FRUITS)
+                .map(s -> {
+                    if(s.equals("Mango"))
+                        throw new RuntimeException(EXCEPTION_OCCURRED);
+                    return s.toUpperCase();
+                })
+                .onErrorMap(throwable ->{
+                    log.info("error = {}",throwable.getMessage());
+                    return new IllegalStateException("From on ErrorMap");
+                })
+                .log();
+    }
+
+    public Flux<String> fruitsFluxDoOnError(){
+        return VEGGIES.concatWith(FRUITS)
+                .map(s -> {
+                    if(s.equals("Mango"))
+                        throw new RuntimeException(EXCEPTION_OCCURRED);
+                    return s.toUpperCase();
+                })
+                .doOnError(throwable ->{
+                    log.info("error = {}",throwable.getMessage());
+                })
                 .log();
     }
 
@@ -153,8 +203,8 @@ public class FluxMonoServices {
 
     public static void main(String[] args){
         FluxMonoServices fluxMonoServices = new FluxMonoServices();
-        fluxMonoServices.fruitsFlux().subscribe(s -> System.out.println("Name = " + s));
-        fluxMonoServices.fruitMono().subscribe(s -> System.out.println("Mono = " + s));
-        fluxMonoServices.fruitsFluxFlatMap().subscribe(s -> System.out.println("FlatMap = " +s));
+        fluxMonoServices.fruitsFlux().subscribe(s -> log.info("Name = " + s));
+        fluxMonoServices.fruitMono().subscribe(s -> log.info("Mono = " + s));
+        fluxMonoServices.fruitsFluxFlatMap().subscribe(s -> log.info("FlatMap = " +s));
     }
 }
