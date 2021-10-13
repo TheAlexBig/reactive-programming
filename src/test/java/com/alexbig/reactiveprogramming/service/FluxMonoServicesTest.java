@@ -1,4 +1,4 @@
-package com.alexbig.reactiveprogramming.services;
+package com.alexbig.reactiveprogramming.service;
 
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
@@ -194,5 +194,39 @@ class FluxMonoServicesTest {
         StepVerifier.create(fruitFlux)
                 .expectNext("Banana", "Orange")
                 .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxOnErrorReturn() {
+        var fruitFlux = fluxMonoServices.fruitsFluxOnErrorReturn();
+        StepVerifier.create(fruitFlux)
+                .expectNext("Mango", "Orange", "ErrorFound")
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxOnErrorContinue() {
+        var fruitFlux = fluxMonoServices.fruitsFluxOnErrorContinue();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(3)
+                .verifyComplete();
+    }
+
+    @Test
+    void fruitsFluxOnErrorMap() {
+        var fruitFlux = fluxMonoServices.fruitsFluxOnErrorMap();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .expectError(IllegalStateException.class)
+                .verify();
+    }
+
+    @Test
+    void fruitsFluxDoOnError() {
+        var fruitFlux = fluxMonoServices.fruitsFluxDoOnError();
+        StepVerifier.create(fruitFlux)
+                .expectNextCount(2)
+                .expectError(RuntimeException.class)
+                .verify();
     }
 }
